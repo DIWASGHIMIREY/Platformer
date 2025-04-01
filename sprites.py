@@ -6,6 +6,7 @@ class Player(pg.sprite.Sprite):
     def __init__(self, game):
         pg.sprite.Sprite.__init__(self)
         self.running = False
+        self.jumping = False
         self.game = game
         self.idle = []
         self.run_img_r = []
@@ -33,31 +34,37 @@ class Player(pg.sprite.Sprite):
 
     def animate(self):
         now = pg.time.get_ticks()
-        if self.vel.x != 0: self.running = True
+        if int(self.vel.x) != 0: self.running = True
         else: self.running = False
-        if not self.running:
+        if not self.running and not self.jumping:
             if now - self.last_update > 500:
                 self.last_update = now
                 self.current_frame = (self.current_frame + 1)%len(self.idle)
                 self.image = self.idle[self.current_frame]
                 self.rect = self.image.get_rect()
+        if self.jumping:
+            self.image = pg.image.load("Sprites/idle3.png")
+            self.rect = self.image.get_rect()
         if self.running:
-            if now - self.last_update > 500:
+            if now - self.last_update > 150:
                 self.last_update = now
                 self.current_frame = (self.current_frame + 1)%len(self.idle)
                 self.image = self.run_img_r[self.current_frame]
+                if self.vel.x < 0:
+                    self.image = self.run_img_l[self.current_frame]
+
                 self.rect = self.image.get_rect()
     def load_img(self):
         for i in range(1,4):
             filename = f"Sprites/idle{i}.png"
             img = pg.image.load(filename)
-            img = pg.transform.scale(img, (50,70))
+            # img = pg.transform.scale(img, (50,70))
             self.idle.append(img)
 
         for i in range(1,7):
             filename = f"Sprites/run{i}.png"
             img_r = pg.image.load(filename)
-            img_r = pg.transform.scale(img_r, (50,70))
+            # img_r = pg.transform.scale(img_r, (50,70))
             self.run_img_r.append(img_r)
 
         for frame in self.run_img_r:
@@ -69,6 +76,7 @@ class Player(pg.sprite.Sprite):
         hits = pg.sprite.spritecollide(self, self.game.platforms, False)
         self.rect.x -= 1
         if hits:
+            self.jumping = True
             self.vel.y = -20
 
     def update(self):

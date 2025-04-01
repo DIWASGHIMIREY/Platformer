@@ -39,6 +39,7 @@ class Game:
         if self.player.vel.y > 0:
             hits = pg.sprite.spritecollide(self.player, self.platforms, False)
             if hits:
+                self.player.jumping = False
                 self.player.pos.y = hits[0].rect.top
                 self.player.vel.y = 0
         # if player reaches top 1/4 of screen
