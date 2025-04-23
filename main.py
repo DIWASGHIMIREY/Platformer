@@ -1,6 +1,6 @@
 import random
-from settings import *
 from sprites import *
+
 
 class Game:
     def __init__(self):
@@ -14,14 +14,17 @@ class Game:
 
     def new(self):
         # start a new game
-        self.all_sprites = pg.sprite.Group()
-        self.platforms = pg.sprite.Group()
+        self.all_sprites = pg.sprite.layeredUpdates()
+        pg.self.platforms = pg.sprite.Group()
         self.player = Player(self)
         self.all_sprites.add(self.player)
         for plat in PLATFORM_LIST:
             p = Platform(*plat)
             self.all_sprites.add(p)
             self.platforms.add(p)
+            for i in range(8):
+                c = Cloud(self)
+                c.rect.y += 500
         self.run()
 
     def run(self):
@@ -45,6 +48,8 @@ class Game:
         # if player reaches top 1/4 of screen
         if self.player.rect.top <= HEIGHT//4:
             self.player.pos.y += abs(self.player.vel.y)
+            for cloud in self.clouds:
+                cloud.rect.y += abs(self.player.vel.y)
             for plat in self.platforms:
                 plat.rect.y += abs(self.player.vel.y)
                 if plat.rect.top >= HEIGHT:

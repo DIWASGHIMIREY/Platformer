@@ -1,6 +1,4 @@
 # Sprite classes for platform game
-import random as ran
-import pygame as pg
 from settings import *
 vec = pg.math.Vector2
 
