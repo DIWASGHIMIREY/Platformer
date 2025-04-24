@@ -1,6 +1,6 @@
 import random
 from sprites import *
-
+import pygame as pg
 
 class Game:
     def __init__(self):
@@ -15,16 +15,18 @@ class Game:
     def new(self):
         # start a new game
         self.all_sprites = pg.sprite.layeredUpdates()
-        pg.self.platforms = pg.sprite.Group()
+        self.platforms = pg.sprite.Group()
+        self.powers = pg.sprite.Group()
         self.player = Player(self)
         self.all_sprites.add(self.player)
+        for i in range(8):
+            c = Cloud(self)
+            c.rect.y += 500
         for plat in PLATFORM_LIST:
-            p = Platform(*plat)
+            p = Platform(self,*plat)
             self.all_sprites.add(p)
             self.platforms.add(p)
-            for i in range(8):
-                c = Cloud(self)
-                c.rect.y += 500
+
         self.run()
 
     def run(self):
@@ -62,7 +64,7 @@ class Game:
             width = random.randrange(50,101)
             x = random.randrange(0, WIDTH - width)
             y = random.randrange(-65, -40)
-            p = Platform(x,y,width,20)
+            p = Platform(self,x,y,width,20)
             self.platforms.add(p)
             self.all_sprites.add(p)
         # die
@@ -73,7 +75,11 @@ class Game:
                     sprite.kill()
             if len(self.platforms) == 0:
                 self.playing = False
-
+            pow_hits = pg.sprite.spritecollide(self.player,self.powers,True)
+            for pow in pow_hits:
+                if pow.type == "boost":
+                    self.player.vel.y = -BOOST_POWER
+                    self.player.jumping = False
     def events(self):
         # Game Loop - events
         for event in pg.event.get():

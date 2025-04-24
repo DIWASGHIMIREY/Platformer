@@ -100,8 +100,11 @@ class Player(pg.sprite.Sprite):
         self.rect.midbottom = self.pos
 
 class Platform(pg.sprite.Sprite):
-    def __init__(self, x, y, w, h):
+    def __init__(self,game, x, y, w, h):
+        self._layer = PLATFORM_LAYER
+        self.groups = game.all_sprites,game.platforms
         pg.sprite.Sprite.__init__(self)
+        self.game = game
         # self.plat_img = []
         # self.image = pg.Surface((w, h))
         # self.image.fill(GREEN)
@@ -114,6 +117,8 @@ class Platform(pg.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
+        if random.randrange(100)<POW_SPAWN_PCT:
+            Pow(self.game,self)
     # def load_img(self):
     #     for i in range(1,5):
     #         filename = f"Sprites/Platforms/platform{i}.png"
@@ -145,3 +150,21 @@ class Platform(pg.sprite.Sprite):
 #
 #         image = sprite_sheet.get_image(x, y, 17.04, 17.03,SCALE, BLACK)
 #         image.set_colorkey(BLACK)
+
+class Pow(pg.sprite.Sprite):
+    def __init__(self, game, plat):
+        self.groups = game.all_sprites, game.powerups
+        pg.sprite.Sprite.__init__(self, self.groups)
+        self.game = game
+        self.plat = plat
+        self.type = random.choice(['boost'])
+        self.image = pg.image.load("power.PNG")
+        self.image.set_colorkey(BLACK)
+        self.rect = self.image.get_rect()
+        self.rect.centerx = self.plat.rect.centerx
+        self.rect.bottom = self.plat.rect.top - 5
+
+    def update(self):
+        self.rect.bottom = self.plat.rect.top - 5
+        if not self.game.platforms.has(self.plat):
+            self.kill()

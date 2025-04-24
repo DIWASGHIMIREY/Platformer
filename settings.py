@@ -1,5 +1,6 @@
 # game options/settings
 import pygame as pg
+import random
 TITLE = "Jumpy!"
 WIDTH = 480
 HEIGHT = 600
@@ -9,6 +10,9 @@ FPS = 60
 PLAYER_ACC = 0.5
 PLAYER_FRICTION = -0.12
 PLAYER_GRAV = 0.8
+
+POW_SPAWN_PCT = 85
+BOOST_POWER = 60
 
 # Starting platforms
 PLATFORM_LIST = [(0, HEIGHT - 40, WIDTH, 100),(225, HEIGHT - 40, 1000, 0),
